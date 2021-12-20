@@ -1,0 +1,105 @@
+- name: required packages installed
+  apt:
+    name:
+      - dkms
+      - python3-serial
+      - fancontrol
+      - lm-sensors
+      - network-manager
+
+- name: copy micon_scripts
+  copy:
+    src: micon_scripts
+    dest: /usr/local/bin/
+
+- name: copy *.sh to /usr/local/bin
+  copy: src={{ item }} dest=/usr/local/bin/ mode=0755
+  with_items:
+    - hotswap_enable.sh
+    - update_boot.sh
+
+- name: copy hotswap.service
+  copy:
+    src: hotswap.service
+    dest: /etc/systemd/system/
+
+- name: copy it8721.conf
+  copy:
+    src: it8721.conf
+    dest: /etc/sensors.d/
+
+- name: copy dkms modules
+  copy:
+    src: Tools/modules/
+    dest: /root/
+
+- name: copy micon_boot.service
+  copy:
+    src: micon_scripts/micon_boot.service
+    dest: /etc/systemd/system/
+
+- name: install modules by dkms
+  command: "{{ item }}"
+  with_items:
+    - "dkms add gpio_dnv"
+    - "dkms add gpio_ich"
+    - "dkms add gpio_it87"
+    - "dkms add it87ts"
+    - "dkms autoinstall"
+  args:
+    chdir: /root/modules/
+  check_mode: no
+  changed_when: no
+  failed_when: no
+
+- name: add modules
+  lineinfile:
+    dest=/etc/modules
+    line={{ item }}
+  with_items:
+    - it87ts
+    - gpio-it87
+    - gpio-ich
+    - pinctrl-dnv  
+
+- name: create /etc/initramfs-tools/post-update.d/
+  file:
+    path: /etc/initramfs-tools/post-update.d/
+    state: directory
+    recurse: yes
+
+- name: create link to update_boot
+  file:
+    src: /usr/local/bin/update_boot.sh
+    dest: /etc/initramfs-tools/post-update.d/update_boot
+    state: link
+
+- name: create link to micon_shutdown
+  file:
+    src: /usr/local/bin/micon_scripts/micon_shutdown.py
+    dest: /lib/systemd/system-shutdown/micon_shutdown
+    state: link
+
+- name: enable hotswap.service
+  systemd:
+    name: hotswap.service
+    daemon-reload: yes
+    state: started
+    enabled: yes
+
+- name: enable micon_boot.service
+  systemd:
+    name: micon_boot.service
+    state: started
+    enabled: yes
+
+- name: copy fan control config
+  copy:
+    src: fancontrol
+    dest: /etc/fancontrol
+
+- name: enable fancontrol.service
+  systemd:
+    name: fancontrol.service
+    state: started
+    enabled: yes
