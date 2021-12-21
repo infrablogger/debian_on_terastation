@@ -7,10 +7,17 @@
       - lm-sensors
       - network-manager
 
-- name: copy micon_scripts
+- name: copy scripts
   copy:
-    src: micon_scripts
-    dest: /usr/local/bin/
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items:
+    - { "src":hotswap_enable.sh, "dest":/usr/local/bin/ }
+    - { "src":update_boot.sh, "dest":/usr/local/bin/ }
+    - { "src":micon_scripts/libmicon.py, "dest":/usr/local/bin/micon_scripts/ }
+    - { "src":micon_scripts/micon_shutdown.py, "dest":/usr/local/bin/micon_scripts/ }
+    - { "src":micon_scripts/micon_startup.py, "dest":/usr/local/bin/micon_scripts/ }
 
 - name: copy *.sh to /usr/local/bin
   copy: src={{ item }} dest=/usr/local/bin/ mode=0755
@@ -30,7 +37,7 @@
 
 - name: copy dkms modules
   copy:
-    src: Tools/modules/
+    src: Tools/modules
     dest: /root/
 
 - name: copy micon_boot.service
