@@ -1,1 +1,0 @@
-/home/buffalo/Debian_on_Intel_Terastations/update_boot.sh
