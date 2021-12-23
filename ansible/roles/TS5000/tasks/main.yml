@@ -19,12 +19,6 @@
     - { "src":micon_scripts/micon_shutdown.py, "dest":/usr/local/bin/micon_scripts/ }
     - { "src":micon_scripts/micon_startup.py, "dest":/usr/local/bin/micon_scripts/ }
 
-- name: copy *.sh to /usr/local/bin
-  copy: src={{ item }} dest=/usr/local/bin/ mode=0755
-  with_items:
-    - hotswap_enable.sh
-    - update_boot.sh
-
 - name: copy hotswap.service
   copy:
     src: hotswap.service
@@ -67,7 +61,7 @@
     - it87ts
     - gpio-it87
     - gpio-ich
-    - pinctrl-dnv  
+    - pinctrl-dnv
 
 - name: create /etc/initramfs-tools/post-update.d/
   file:
