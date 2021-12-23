@@ -15,10 +15,8 @@ def startupV2(port):
 	##disable boot watchdog
 	test.send_write_cmd(0,0x03)
 
-	file = open("/etc/debian_version", "r")
-	version= "Debian " + file.readline().strip()
-	version = version.center(16)
-	title = "Terastation " + platform.machine()[:3].upper()
+	title = "Buffalo".center(16)
+	version= "RemoteSupportKit".center(16)
 
 	### need to understand variations of this
 	##turn of red drive leds
