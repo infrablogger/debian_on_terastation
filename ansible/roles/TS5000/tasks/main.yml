@@ -1,11 +1,11 @@
-- name: required packages installed
-  apt:
-    name:
-      - dkms
-      - python3-serial
-      - fancontrol
-      - lm-sensors
-      - network-manager
+# - name: required packages installed
+#   apt:
+#     name:
+#       - dkms
+#       - python3-serial
+#       - fancontrol
+#       - lm-sensors
+#       - network-manager
 
 - name: copy scripts
   copy:
@@ -24,44 +24,44 @@
     src: hotswap.service
     dest: /etc/systemd/system/
 
-- name: copy it8721.conf
-  copy:
-    src: it8721.conf
-    dest: /etc/sensors.d/
+# - name: copy it8721.conf
+#   copy:
+#     src: it8721.conf
+#     dest: /etc/sensors.d/
 
-- name: copy dkms modules
-  copy:
-    src: Tools/modules
-    dest: /root/
+# - name: copy dkms modules
+#   copy:
+#     src: Tools/modules
+#     dest: /root/
 
 - name: copy micon_boot.service
   copy:
     src: micon_scripts/micon_boot.service
     dest: /etc/systemd/system/
 
-- name: install modules by dkms
-  command: "{{ item }}"
-  with_items:
-    - "dkms add gpio_dnv"
-    - "dkms add gpio_ich"
-    - "dkms add gpio_it87"
-    - "dkms add it87ts"
-    - "dkms autoinstall"
-  args:
-    chdir: /root/modules/
-  check_mode: no
-  changed_when: no
-  failed_when: no
+# - name: install modules by dkms
+#   command: "{{ item }}"
+#   with_items:
+#     - "dkms add gpio_dnv"
+#     - "dkms add gpio_ich"
+#     - "dkms add gpio_it87"
+#     - "dkms add it87ts"
+#     - "dkms autoinstall"
+#   args:
+#     chdir: /root/modules/
+#   check_mode: no
+#   changed_when: no
+#   failed_when: no
 
-- name: add modules
-  lineinfile:
-    dest=/etc/modules
-    line={{ item }}
-  with_items:
-    - it87ts
-    - gpio-it87
-    - gpio-ich
-    - pinctrl-dnv
+# - name: add modules
+#   lineinfile:
+#     dest=/etc/modules
+#     line={{ item }}
+#   with_items:
+#     - it87ts
+#     - gpio-it87
+#     - gpio-ich
+#     - pinctrl-dnv
 
 - name: create /etc/initramfs-tools/post-update.d/
   file:
@@ -94,13 +94,13 @@
     state: started
     enabled: yes
 
-- name: copy fan control config
-  copy:
-    src: fancontrol
-    dest: /etc/fancontrol
+# - name: copy fan control config
+#   copy:
+#     src: fancontrol
+#     dest: /etc/fancontrol
 
-- name: enable fancontrol.service
-  systemd:
-    name: fancontrol.service
-    state: started
-    enabled: yes
+# - name: enable fancontrol.service
+#   systemd:
+#     name: fancontrol.service
+#     state: started
+#     enabled: yes
